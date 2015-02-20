@@ -8,19 +8,26 @@
         $(document).ready(function() {
             var PLAYGROUND_HEIGHT = 500;
             var PLAYGROUND_WIDTH = 700;
+            var REFRESH_RATE = 5;
 
             $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH});
 
             var background1 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
+            var background11 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
             var background2 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
+            var background22 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
             var background3 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
+            var background33 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
 
             $.playground()
                     .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
                     .addSprite("background1", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background11", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH})
                     .addSprite("background2", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
-
+                    .addSprite("background22", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH})
+                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background33", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH});
+//
             var duck = [];
             duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
 
@@ -55,39 +62,38 @@
                 }
             });
 
-            var backSpeed=1;
-            var centerSpeed=2;
-            var frontSpeed=3;
+            var backSpeed=2;
+            var centerSpeed=3;
+            var frontSpeed=5;
 
-//            $.playground().registerCallback(function(){
-//                //Offset all the pane:
-//                var newPos = (parseInt($("#background1").css("left")) - backSpeed - PLAYGROUND_WIDTH)
-//                        % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background1").css("left", newPos);
-//
-//                newPos = (parseInt($("#background2").css("left")) - backSpeed - PLAYGROUND_WIDTH)
-//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background2").css("left", newPos);
-//
-//                newPos = (parseInt($("#background3").css("left")) - mediumStarSpeed - PLAYGROUND_WIDTH)
-//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background3").css("left", newPos);
-//
-//                newPos = (parseInt($("#background4").css("left")) - mediumStarSpeed - PLAYGROUND_WIDTH)
-//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background4").css("left", newPos);
-//
-//                newPos = (parseInt($("#background5").css("left")) - bigStarSpeed - PLAYGROUND_WIDTH)
-//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background5").css("left", newPos);
-//
-//                newPos = (parseInt($("#background6").css("left")) - bigStarSpeed - PLAYGROUND_WIDTH)
-//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
-//                $("#background6").css("left", newPos);
-//            }, REFRESH_RATE);
+            $.playground().registerCallback(function(){
+                //Offset all the pane:
+                var newPos = (parseInt($("#background1").css("left")) - backSpeed - PLAYGROUND_WIDTH)
+                        % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+                $("#background1").css("left", newPos);
+
+                var newPos = (parseInt($("#background11").css("left")) - backSpeed)
+                        % (-2 * PLAYGROUND_WIDTH);
+                $("#background11").css("left", newPos);
+
+                newPos = (parseInt($("#background2").css("left")) - centerSpeed - PLAYGROUND_WIDTH)
+                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+                $("#background2").css("left", newPos);
+
+                newPos = (parseInt($("#background22").css("left")) - centerSpeed)
+                % (-2 * PLAYGROUND_WIDTH);
+                $("#background22").css("left", newPos);
+
+                newPos = (parseInt($("#background3").css("left")) - frontSpeed - PLAYGROUND_WIDTH)
+                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+                $("#background3").css("left", newPos);
+
+                newPos = (parseInt($("#background33").css("left")) - frontSpeed)
+                % (-2 * PLAYGROUND_WIDTH);
+                $("#background33").css("left", newPos);
+            }, REFRESH_RATE);
 
             $.playground().startGame(function(){
-                //$("#welcomeScreen").fadeTo(1000,0,function(){$(this).remove();});
             });
         })
     </script>
