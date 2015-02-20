@@ -9,7 +9,7 @@
 
 
         function explodePlayer(playerNode){
-            playerNode.children().hide();
+            playerNode.children().remove();
             //playerNode.addSprite("explosion",{animation: playerAnimation["explode"], width: 100, height: 26})
             playerHit = true;
         }
@@ -119,7 +119,7 @@
              div.addEventListener('swu', onUp, false);
              div.addEventListener('swd', onDown, false);
 
-div.addEventListener('touchstart',function(e){e.preventDefault()},false);
+            div.addEventListener('touchstart',function(e){e.preventDefault()},false);
 
 
             var PLAYGROUND_HEIGHT = 500;
@@ -137,39 +137,40 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
 
             $.playground()
                     .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background1", {
-                        animation: background1,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT
-                    })
-                    .addSprite("background11", {
-                        animation: background1,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT,
-                        posx: PLAYGROUND_WIDTH
-                    })
-                    .addSprite("background2", {
-                        animation: background2,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT
-                    })
-                    .addSprite("background22", {
-                        animation: background2,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT,
-                        posx: PLAYGROUND_WIDTH
-                    })
-                    .addSprite("background3", {
-                        animation: background3,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT
-                    })
-                    .addSprite("background33", {
-                        animation: background3,
-                        width: PLAYGROUND_WIDTH,
-                        height: PLAYGROUND_HEIGHT,
-                        posx: PLAYGROUND_WIDTH
-                    });
+                        .addSprite("background1", {
+                            animation: background1,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT
+                        })
+                        .addSprite("background11", {
+                            animation: background1,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT,
+                            posx: PLAYGROUND_WIDTH
+                        })
+                        .addSprite("background2", {
+                            animation: background2,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT
+                        })
+                        .addSprite("background22", {
+                            animation: background2,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT,
+                            posx: PLAYGROUND_WIDTH
+                        })
+                        .addSprite("background3", {
+                            animation: background3,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT
+                        })
+                        .addSprite("background33", {
+                            animation: background3,
+                            width: PLAYGROUND_WIDTH,
+                            height: PLAYGROUND_HEIGHT,
+                            posx: PLAYGROUND_WIDTH
+                        })
+                    .end();
 
             var duck = [];
             duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
@@ -212,8 +213,10 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
 
             $.playground()
                     .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT / 2 - 50, width: 100, height: 100})
-                        .addSprite("duckBody", {animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
+                        .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT / 2 - 50, width: 100, height: 100})
+                            .addSprite("duckBody", {animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
+                        .end()
+                    .end()
 
             $("#duck")[0].player = new Player($("#duck"));
 
@@ -239,8 +242,18 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
             var centerSpeed = 3;
             var frontSpeed = 5;
 
+
+
             //animate enemies
             $.playground().registerCallback(function () {
+
+
+                var collision = $("#duckBody").collision(".enemy");
+
+
+                if(collision.length > 0)
+                    console.log(collision);
+//                return;
                 $(".enemy").each(function(){
                     this.enemy.update($("#duck"));
                     var posx = $(this).x();
@@ -248,27 +261,56 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
                         $(this).remove();
                         return;
                     }
-                    //Test for collisions
-                    var collided = $(this).collision("#duckBody,."+$.gQ.groupCssClass);
-//                    console.log($.gQ.groupCssClass);
-//                    console.log(collided);
-                    if(collided.length > 0){
+
+
+                    var duckPosition = $("#duckBody").offset();
+                    var enemyPosition = $(this).offset();
+
+                    function range(from, to) {
+                        var array = []
+                        while(from<=to) {
+                            array.push(from)
+                            from++;
+                        }
+                        return array;
+                    }
+
+                    function intersect(a, b)
+                    {
+                        var ai=0, bi=0;
+                        var result = new Array();
+
+                        while( ai < a.length && bi < b.length )
+                        {
+                            if      (a[ai] < b[bi] ){ ai++; }
+                            else if (a[ai] > b[bi] ){ bi++; }
+                            else /* they're equal */
+                            {
+                                result.push(a[ai]);
+                                ai++;
+                                bi++;
+                            }
+                        }
+
+                        return result;
+                    }
+
+                    var duckXRange = range(duckPosition.left, duckPosition.left+$("#duckBody").width());
+                    var enemyXRange = range(enemyPosition.left, enemyPosition.left+$(this).width());
+
+                    var duckYRange = range(duckPosition.top, duckPosition.top+$("#duckBody").height());
+                    var enemyYRange = range(enemyPosition.top, enemyPosition.top+$(this).height());
+
+                    if (intersect(duckXRange, enemyXRange).length> 0 && intersect(duckYRange, enemyYRange).length) {
+
+
                         $(this).removeClass("enemy");
                         $(this).remove();
-                        //The player has been hit!
-                        if($("#duck")[0].player.damage()){
+//                        //The player has been hit!
+                        if ($("#duck")[0].player.damage()) {
                             explodePlayer($("#duck"));
                         }
                     }
-                    //Make the enemy fire
-//                    if(this.enemy instanceof Brainy){
-//                        if(Math.random() < 0.05){
-//                            var enemyposx = $(this).x();
-//                            var enemyposy = $(this).y();
-//                            var name = "enemiesMissile_"+Math.ceil(Math.random()*1000);
-//                            $("#enemiesMissileLayer").addSprite(name,{animation: missile["enemies"], posx: enemyposx, posy: enemyposy + 20, width: 30,height: 15});
-//                            $("#"+name).addClass("enemiesMissiles");
-//                        }
 //                    }
                 });
             }, REFRESH_RATE);
@@ -287,7 +329,7 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
                 $("#" + name)[0].enemy = new Minion($("#" + name));
 
 
-            }, 1500);
+            }, 2000);
 
             //animate waves
             $.playground().registerCallback(function () {
@@ -319,7 +361,11 @@ div.addEventListener('touchstart',function(e){e.preventDefault()},false);
 
             $.playground().startGame(function () {
             });
-        })
+
+            $("#playground").click(function(){
+                console.log("click");
+            });
+        });
     </script>
     <style type="text/css">
         html,body{
