@@ -4,61 +4,126 @@
     <title>duck404</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
+    <!--<script type="text/javascript" src="js/main.js"></script>-->
     <script type="text/javascript">
+
+(function(D){
+ var
+ ce=function(e,n){var a=D.createEvent("CustomEvent");a.initCustomEvent(n,true,true,e.target);e.target.dispatchEvent(a);a=null;return 1},
+ m=(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)?'touch':'mouse'),
+ nm=1,
+ bd=0,
+ sx,
+ sy,
+ ex,
+ ey,
+ M=Math,
+ MA=M.abs,
+ MM=M.max,
+ x,
+ y,
+ xr,
+ yr,
+ f={
+  touch:{
+   touchstart:function(e){
+    return ce(e,(sx=e.touches[0].pageX,sy=e.touches[0].pageY,'sfc'))
+   },
+   touchmove:function(e){
+    return nm=0,ex=e.touches[0].pageX,ey=e.touches[0].pageY,1
+   },
+   touchend:function(e){
+    return ce(e,nm?'fc':(x=ex-sx,xr=MA(x),y=ey-sy,yr=MA(y),nm=1,MM(xr,yr)>20?xr>yr?x<0?'swl':'swr':y<0?'swu':'swd':'fc'))
+   },
+   touchcancel:function(e){
+    return nm=0,1
+   }
+  },
+  mouse:{
+   mousedown:function(e){
+    return e.button||(bd=1,sx=e.x,sy=e.y,ce(e,'sfc'))
+   },
+   mousemove:function(e){
+    return !bd||(nm=0,ex=e.x,ey=e.y,1)
+   },
+   mouseup:function(e){
+    return e.button||(bd=0,ce(e,nm?'fc':(nm=1,x=ex-sx,xr=MA(x),y=ey-sy,yr=MA(y),MM(xr,yr)>20?xr>yr?x<0?'swl':'swr':y<0?'swu':'swd':'fc')))
+   }
+  }
+ };
+ for(var a in f[m]){D.addEventListener(a,f[m][a],false)}
+})(document)
+
+function addAllListeners(){
+ function func(e){
+  alert(e.type);
+ }
+ var div=document.getElementsByTagName('div')[0];
+
+ div.addEventListener('swu',func,false);
+ div.addEventListener('swd',func,false);
+
+div.addEventListener('touchstart',function(e){e.preventDefault()},false);
+}
+
         $(document).ready(function() {
-            var PLAYGROUND_HEIGHT = 500;
-            var PLAYGROUND_WIDTH = 700;
-
-            $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH});
-
-            var background1 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
-            var background2 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
-            var background3 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
-
-            $.playground()
-                    .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background1", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background2", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
-
-            var duck = [];
-            duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
-
-            $.playground()
-                .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT/2 - 50, width: 100, height: 100})
-                        .addSprite("duckBody",{animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
-
             currentPosition = 1;
-
-            $(document).keydown(function(e){
-
-                position = ["-125px", "0px", "125px"];
-
-                switch(e.keyCode){
-                    case 38: //up
+                            position = ["-125px", "0px", "125px"];
+            var onUp = function(){
                             console.log("UP")
                             if (currentPosition == 0) {
                                 return
                             }
                             currentPosition--;
                             $("#duck").css("top", position[currentPosition]);
-                        break;
-                    case 40: //down
-                        console.log("DOWN")
+            }
+
+            var onDown = function(){
                         if (currentPosition == 2) {
                             return
                         }
                         currentPosition++;
                         $("#duck").css("top", position[currentPosition]);
+            }
+
+             var div=document.getElementsByTagName('div')[0];
+
+ div.addEventListener('swu', onUp, false);
+ div.addEventListener('swd', onDown, false);
+
+div.addEventListener('touchstart',function(e){e.preventDefault()},false);
+
+
+            var PLAYGROUND_HEIGHT = 500;
+            var PLAYGROUND_WIDTH = 700;
+            $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH});
+            var background1 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
+            var background2 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
+            var background3 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
+            $.playground()
+                    .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background1", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background2", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+            var duck = [];
+            duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
+            $.playground()
+                .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT/2 - 50, width: 100, height: 100})
+                        .addSprite("duckBody",{animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
+            $(document).keydown(function(e){
+                switch(e.keyCode){
+                    case 38: //up
+                            onUp();
+                        break;
+                    case 40: //down
+                        onDown();
                         break;
                 }
             });
-
             var backSpeed=1;
             var centerSpeed=2;
             var frontSpeed=3;
-
 //            $.playground().registerCallback(function(){
 //                //Offset all the pane:
 //                var newPos = (parseInt($("#background1").css("left")) - backSpeed - PLAYGROUND_WIDTH)
@@ -85,7 +150,6 @@
 //                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
 //                $("#background6").css("left", newPos);
 //            }, REFRESH_RATE);
-
             $.playground().startGame(function(){
                 //$("#welcomeScreen").fadeTo(1000,0,function(){$(this).remove();});
             });
@@ -93,9 +157,9 @@
     </script>
     <style type="text/css">
         html,body{
-            margin: 0;
-            padding: 0;
-            background: black;
+        margin: 0;
+        padding: 0;
+        background: black;
         }
     </style>
 </head>
