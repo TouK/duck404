@@ -1,25 +1,107 @@
-<html>
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 <head>
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script type="application/javascript">
-        $(document).ready(function () {
+    <title>duck404</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var PLAYGROUND_HEIGHT = 500;
+            var PLAYGROUND_WIDTH = 700;
 
-            var c = $('#canvas').get(0);
-            var ctx = c.getContext("2d");
-            var canvasWidth = $('#canvas').width();
-            var canvasHeight = $('#canvas').height();
+            $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH});
 
-            ctx.moveTo(0, canvasHeight / 2);
-            ctx.lineTo(canvasWidth, canvasHeight / 2);
-            ctx.stroke();
+            var background1 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
+            var background2 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
+            var background3 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
 
-        });
+            $.playground()
+                    .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background1", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background2", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT});
+
+            var duck = [];
+            duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
+
+            $.playground()
+                .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT/2 - 50, width: 100, height: 100})
+                        .addSprite("duckBody",{animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
+
+            currentPosition = 1;
+
+            $(document).keydown(function(e){
+
+                position = ["-125px", "0px", "125px"];
+
+                switch(e.keyCode){
+                    case 38: //up
+                            console.log("UP")
+                            if (currentPosition == 0) {
+                                return
+                            }
+                            currentPosition--;
+                            $("#duck").css("top", position[currentPosition]);
+                        break;
+                    case 40: //down
+                        console.log("DOWN")
+                        if (currentPosition == 2) {
+                            return
+                        }
+                        currentPosition++;
+                        $("#duck").css("top", position[currentPosition]);
+                        break;
+                }
+            });
+
+            var backSpeed=1;
+            var centerSpeed=2;
+            var frontSpeed=3;
+
+//            $.playground().registerCallback(function(){
+//                //Offset all the pane:
+//                var newPos = (parseInt($("#background1").css("left")) - backSpeed - PLAYGROUND_WIDTH)
+//                        % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background1").css("left", newPos);
+//
+//                newPos = (parseInt($("#background2").css("left")) - backSpeed - PLAYGROUND_WIDTH)
+//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background2").css("left", newPos);
+//
+//                newPos = (parseInt($("#background3").css("left")) - mediumStarSpeed - PLAYGROUND_WIDTH)
+//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background3").css("left", newPos);
+//
+//                newPos = (parseInt($("#background4").css("left")) - mediumStarSpeed - PLAYGROUND_WIDTH)
+//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background4").css("left", newPos);
+//
+//                newPos = (parseInt($("#background5").css("left")) - bigStarSpeed - PLAYGROUND_WIDTH)
+//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background5").css("left", newPos);
+//
+//                newPos = (parseInt($("#background6").css("left")) - bigStarSpeed - PLAYGROUND_WIDTH)
+//                % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
+//                $("#background6").css("left", newPos);
+//            }, REFRESH_RATE);
+
+            $.playground().startGame(function(){
+                //$("#welcomeScreen").fadeTo(1000,0,function(){$(this).remove();});
+            });
+        })
     </script>
+    <style type="text/css">
+        html,body{
+            margin: 0;
+            padding: 0;
+            background: black;
+        }
+    </style>
 </head>
-
 <body>
-    <canvas id="canvas" width="500" height="500" style="border:1px solid #000000;"/>
-</body>
+<div id="playground" style="width: 700px; height: 500px; background: white;">
 
+</div>
+</body>
 </html>
