@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+
+            var c = $('#canvas').get(0);
+            var ctx = c.getContext("2d");
+            var canvasWidth = $('#canvas').width();
+            var canvasHeight = $('#canvas').height();
+
+            ctx.moveTo(0, canvasHeight / 2);
+            ctx.lineTo(canvasWidth, canvasHeight / 2);
+            ctx.stroke();
+
+        });
+    </script>
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500" style="border:1px solid #000000;"/>
+</body>
+
+</html>
