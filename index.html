@@ -5,7 +5,30 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
+        function Enemy(node) {
+            this.speedx = -5;
+            this.speedy = 0;
+            this.node = $(node);
+
+            this.updateX = function (playerNode) {
+                var newpos = parseInt(this.node.css("left")) + this.speedx;
+                this.node.css("left", "" + newpos + "px");
+            };
+        }
+
+        function Minion(node) {
+            this.node = $(node);
+        }
+        Minion.prototype = new Enemy();
+        Minion.prototype.updateY = function (playerNode) {
+
+//            if (this.node.y() > (PLAYGROUND_HEIGHT - 100)) {
+//                this.node.y(-2, true)
+//            }
+        }
+
+
+        $(document).ready(function () {
             var PLAYGROUND_HEIGHT = 500;
             var PLAYGROUND_WIDTH = 700;
             var REFRESH_RATE = 5;
@@ -21,35 +44,85 @@
 
             $.playground()
                     .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background1", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background11", {animation: background1, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH})
-                    .addSprite("background2", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background22", {animation: background2, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH})
-                    .addSprite("background3", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addSprite("background33", {animation: background3, width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT, posx: PLAYGROUND_WIDTH});
-//
+                    .addSprite("background1", {
+                        animation: background1,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT
+                    })
+                    .addSprite("background11", {
+                        animation: background1,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT,
+                        posx: PLAYGROUND_WIDTH
+                    })
+                    .addSprite("background2", {
+                        animation: background2,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT
+                    })
+                    .addSprite("background22", {
+                        animation: background2,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT,
+                        posx: PLAYGROUND_WIDTH
+                    })
+                    .addSprite("background3", {
+                        animation: background3,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT
+                    })
+                    .addSprite("background33", {
+                        animation: background3,
+                        width: PLAYGROUND_WIDTH,
+                        height: PLAYGROUND_HEIGHT,
+                        posx: PLAYGROUND_WIDTH
+                    });
+
             var duck = [];
             duck["body"] = new $.gameQuery.Animation({imageURL: "img/duck100x100.png"});
 
+            var enemies = []
+            enemies[0] = new $.gQ.Animation({
+                imageURL: "img/submarine.png",
+                numberOfFrame: 5,
+                delta: 52,
+                rate: 60,
+                type: $.gQ.ANIMATION_VERTICAL
+            });
+            enemies[1] = new $.gQ.Animation({
+                imageURL: "img/boat.png",
+                numberOfFrame: 8,
+                delta: 42,
+                rate: 60,
+                type: $.gQ.ANIMATION_VERTICAL
+            });
+            enemies[2] = new $.gQ.Animation({
+                imageURL: "img/airplane.png",
+                numberOfFrame: 5,
+                delta: 100,
+                rate: 60,
+                type: $.gQ.ANIMATION_VERTICAL
+            });
+
             $.playground()
-                .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
-                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT/2 - 50, width: 100, height: 100})
-                        .addSprite("duckBody",{animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
+                    .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
+                    .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT / 2 - 50, width: 100, height: 100})
+                        .addSprite("duckBody", {animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
 
             currentPosition = 1;
 
-            $(document).keydown(function(e){
+            $(document).keydown(function (e) {
 
                 position = ["-125px", "0px", "125px"];
 
-                switch(e.keyCode){
+                switch (e.keyCode) {
                     case 38: //up
-                            console.log("UP")
-                            if (currentPosition == 0) {
-                                return
-                            }
-                            currentPosition--;
-                            $("#duck").css("top", position[currentPosition]);
+                        console.log("UP")
+                        if (currentPosition == 0) {
+                            return
+                        }
+                        currentPosition--;
+                        $("#duck").css("top", position[currentPosition]);
                         break;
                     case 40: //down
                         console.log("DOWN")
@@ -62,11 +135,22 @@
                 }
             });
 
-            var backSpeed=2;
-            var centerSpeed=3;
-            var frontSpeed=5;
+            var backSpeed = 2;
+            var centerSpeed = 3;
+            var frontSpeed = 5;
 
-            $.playground().registerCallback(function(){
+            //generate enemies
+
+            //animate enemies
+            $.playground().registerCallback(function () {
+                var name = "enemy1_" + Math.ceil(Math.random() * 1000);
+                $("#objects").addSprite(name, {animation: enemies[0], posx: PLAYGROUND_WIDTH, posy: Math.random() * PLAYGROUND_HEIGHT, width: 227, height: 100});
+                $("#" + name).addClass("enemy");
+                $("#" + name)[0].enemy = new Minion($("#" + name));
+            }, 1000)
+
+            //animate waves
+            $.playground().registerCallback(function () {
                 //Offset all the pane:
                 var newPos = (parseInt($("#background1").css("left")) - backSpeed - PLAYGROUND_WIDTH)
                         % (-2 * PLAYGROUND_WIDTH) + PLAYGROUND_WIDTH;
@@ -93,12 +177,12 @@
                 $("#background33").css("left", newPos);
             }, REFRESH_RATE);
 
-            $.playground().startGame(function(){
+            $.playground().startGame(function () {
             });
         })
     </script>
     <style type="text/css">
-        html,body{
+        html, body {
             margin: 0;
             padding: 0;
             background: black;
