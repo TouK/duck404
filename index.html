@@ -5,6 +5,64 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
     <script type="text/javascript">
+
+
+        function explodePlayer(playerNode){
+            playerNode.children().hide();
+            //playerNode.addSprite("explosion",{animation: playerAnimation["explode"], width: 100, height: 26})
+            playerHit = true;
+        }
+
+
+        function Player(node){
+
+            this.node = node;
+            //this.animations = animations;
+
+            this.grace = false;
+            this.replay = 1;
+            this.shield = 1;
+            this.respawnTime = -1;
+
+            // This function damage the ship and return true if this cause the ship to die
+            this.damage = function(){
+//                if(!this.grace){
+//                    this.shield--;
+//                    if (this.shield == 0){
+//                        return true;
+//                    }
+//                    return false;
+//                }
+                return true;
+            };
+
+            // this try to respawn the ship after a death and return true if the game is over
+            this.respawn = function(){
+                this.replay--;
+                if(this.replay==0){
+                    return true;
+                }
+
+                this.grace 	= true;
+                this.shield	= 3;
+
+                this.respawnTime = (new Date()).getTime();
+                $(this.node).fadeTo(0, 0.5);
+                return false;
+            };
+
+            this.update = function(){
+                if((this.respawnTime > 0) && (((new Date()).getTime()-this.respawnTime) > 3000)){
+                    this.grace = false;
+                    $(this.node).fadeTo(500, 1);
+                    this.respawnTime = -1;
+                }
+            }
+
+            return true;
+        }
+
+
         function Enemy(node) {
             this.speedx = -5;
             this.speedy = 0;
@@ -130,6 +188,10 @@
                     .addGroup("duck", {posx: 0, posy: PLAYGROUND_HEIGHT / 2 - 50, width: 100, height: 100})
                         .addSprite("duckBody", {animation: duck["body"], posx: 0, posy: 0, width: 100, height: 100})
 
+            $("#duck")[0].player = new Player($("#duck"));
+
+
+
             currentPosition = 1;
 
             $(document).keydown(function (e) {
@@ -165,29 +227,22 @@
                 $(".enemy").each(function(){
                     this.enemy.update($("#duck"));
                     var posx = $(this).x();
-                    if((posx + 100) < 0){
+                    if((posx+100) < 0){
                         $(this).remove();
                         return;
                     }
                     //Test for collisions
-//                    var collided = $(this).collision("#playerBody,."+$.gQ.groupCssClass);
-//                    if(collided.length > 0){
-//                        if(this.enemy instanceof Bossy){
-//                            $(this).setAnimation(enemies[2]["explode"], function(node){$(node).remove();});
-//                            $(this).css("width", 150);
-//                        } else if(this.enemy instanceof Brainy) {
-//                            $(this).setAnimation(enemies[1]["explode"], function(node){$(node).remove();});
-//                            $(this).css("width", 150);
-//                        } else {
-//                            $(this).setAnimation(enemies[0]["explode"], function(node){$(node).remove();});
-//                            $(this).css("width", 200);
-//                        }
-//                        $(this).removeClass("enemy");
-//                        //The player has been hit!
-//                        if($("#player")[0].player.damage()){
-//                            explodePlayer($("#player"));
-//                        }
-//                    }
+                    var collided = $(this).collision("#duckBody,."+$.gQ.groupCssClass);
+//                    console.log($.gQ.groupCssClass);
+//                    console.log(collided);
+                    if(collided.length > 0){
+                        $(this).removeClass("enemy");
+                        $(this).remove();
+                        //The player has been hit!
+                        if($("#duck")[0].player.damage()){
+                            explodePlayer($("#duck"));
+                        }
+                    }
                     //Make the enemy fire
 //                    if(this.enemy instanceof Brainy){
 //                        if(Math.random() < 0.05){
