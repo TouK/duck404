@@ -129,12 +129,12 @@
 
             $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH});
 
-            var background1 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
-            var background11 = new $.gameQuery.Animation({imageURL: "img/background/background-03.png"});
-            var background2 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
-            var background22 = new $.gameQuery.Animation({imageURL: "img/background/background-01.png"});
-            var background3 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
-            var background33 = new $.gameQuery.Animation({imageURL: "img/background/background-04.png"});
+            var background1 = new $.gameQuery.Animation({imageURL: "img/background/back.png"});
+            var background11 = new $.gameQuery.Animation({imageURL: "img/background/back.png"});
+            var background2 = new $.gameQuery.Animation({imageURL: "img/background/middle.png"});
+            var background22 = new $.gameQuery.Animation({imageURL: "img/background/middle.png"});
+            var background3 = new $.gameQuery.Animation({imageURL: "img/background/front.png"});
+            var background33 = new $.gameQuery.Animation({imageURL: "img/background/front.png"});
 
             $.playground()
                     .addGroup("background", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT})
@@ -258,7 +258,7 @@
                 $(".enemy").each(function(){
                     this.enemy.update($("#duck"));
                     var posx = $(this).x();
-                    if((posx+100) < 0){
+                    if((posx+230) < 0){
                         $(this).remove();
                         return;
                     }
@@ -377,7 +377,7 @@
     </style>
 </head>
 <body>
-<div id="playground" style="width: 700px; height: 500px; background: white;">
+<div id="playground" style="width: 700px; height: 500px; background: white url('img/background/background.png') no-repeat fixed;">
 
 </div>
 </body>
