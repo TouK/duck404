@@ -4,6 +4,7 @@
     <title>duck404</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
 
 
@@ -93,8 +94,34 @@
 //            }
         }
 
+        $(document).ready(function() {
+            currentPosition = 1;
+                            position = ["-125px", "0px", "125px"];
+            var onUp = function(){
+                            console.log("UP")
+                            if (currentPosition == 0) {
+                                return
+                            }
+                            currentPosition--;
+                            $("#duck").css("top", position[currentPosition]);
+            }
 
-        $(document).ready(function () {
+            var onDown = function(){
+                        if (currentPosition == 2) {
+                            return
+                        }
+                        currentPosition++;
+                        $("#duck").css("top", position[currentPosition]);
+            }
+
+             var div=document.getElementsByTagName('div')[0];
+
+             div.addEventListener('swu', onUp, false);
+             div.addEventListener('swd', onDown, false);
+
+div.addEventListener('touchstart',function(e){e.preventDefault()},false);
+
+
             var PLAYGROUND_HEIGHT = 500;
             var PLAYGROUND_WIDTH = 700;
             var REFRESH_RATE = 5;
@@ -200,20 +227,10 @@
 
                 switch (e.keyCode) {
                     case 38: //up
-                        console.log("UP")
-                        if (currentPosition == 0) {
-                            return
-                        }
-                        currentPosition--;
-                        $("#duck").css("top", position[currentPosition]);
+                        onUp();
                         break;
                     case 40: //down
-                        console.log("DOWN")
-                        if (currentPosition == 2) {
-                            return
-                        }
-                        currentPosition++;
-                        $("#duck").css("top", position[currentPosition]);
+                        onDown();
                         break;
                 }
             });
@@ -305,7 +322,7 @@
         })
     </script>
     <style type="text/css">
-        html, body {
+        html,body{
             margin: 0;
             padding: 0;
             background: black;
