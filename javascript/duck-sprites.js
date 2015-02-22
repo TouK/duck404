@@ -56,20 +56,27 @@
         init: function(p) {
             this._super(p, {
                 x: Q.width/2,
-                y: Q.height/2,
+                y: 110,
                 type: Q.SPRITE_UI,
                 sheet: 'background'
             })
+
+            this.on("touchEnd");
+        },
+        touchEnd: function(touch) {
+            Q.input.trigger('up')
         }
     })
 
     Q.Sprite.extend("Wave", {
         init: function(p) {
             this._super(p, {
-                y: Q.height/2,
+                y: Q.height/2 + 112,
                 speed: 1,
                 type: Q.SPRITE_UI
             })
+
+            this.on("touchEnd")
         },
         step: function(p) {
             var skip = 2 * this.p.speed;
@@ -77,6 +84,9 @@
             if (this.p.x < - this.p.w/2) {
                 this.p.x = this.p.w/2 + this.p.w - skip;
             }
+        },
+        touchEnd: function(touch) {
+            Q.input.trigger('down')
         }
     })
 
